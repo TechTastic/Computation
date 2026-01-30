@@ -1,16 +1,16 @@
-# Hytale Plugin Template
+# Computation
+*A new Hytale computer mod for the mod jam!*
 
-A template for Hytale java plugins. Created by [Up](https://github.com/UpcraftLP), and slightly modified by Kaupenjoe. 
+Computation is a computer mod for Hytale heavily inspire (atleast in function) by CC: Tweaked!
 
-### Configuring the Template
-If you for example installed the game in a non-standard location, you will need to tell the project about that.
-The recommended way is to create a file at `%USERPROFILE%/.gradle/gradle.properties` to set these properties globally.
-
-```properties
-# Set a custom game install location
-hytale.install_dir=path/to/Hytale
-
-# Speed up the decompilation process significantly, by only including the core hytale packages.
-# Recommended if decompiling the game takes a very long time on your PC.
-hytale.decompile_partial=true
-```
+To Do:
+- [ ] Setup Project
+- [ ] Make temporary block for Computer (clone a bench?)
+- [ ] Make custom interaction
+- [ ] Start work on `LuaMachine` (for handling LuaJ, will be abstracted later)
+- [ ] Test and verify `LuaMachine` works via interaction
+- [ ] Start work on computer terminal UI for editing scripts
+- [ ] Start work on saving/loading scripts
+- [ ] Start work on the ability to add new APIs/libraries via `LuaMachine`
+- [ ] Start work on the ability to add new peripheral via `LuaMachine`
+- [ ] Start work on wired connections system
