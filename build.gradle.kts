@@ -12,11 +12,13 @@ repositories {
     maven("https://maven.hytale-modding.info/releases") {
         name = "HytaleModdingReleases"
     }
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.jspecify)
+    implementation(libs.luaj.jse)
 }
 
 hytale {
