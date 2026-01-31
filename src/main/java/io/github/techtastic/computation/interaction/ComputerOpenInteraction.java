@@ -27,8 +27,6 @@ public class ComputerOpenInteraction extends SimpleInstantInteraction {
     protected void firstRun(@NonNull InteractionType interactionType, @NonNull InteractionContext interactionContext, @NonNull CooldownHandler cooldownHandler) {
         ComputationPlugin.getComputationLogger().atInfo().log("You interacted!");
 
-        //ComputationPlugin.LUA.runScript("local count = 0 while true do print(\"Hello World! #\"..tostring(count)) count = count + 1 end");
-
         Ref<EntityStore> ref = interactionContext.getOwningEntity();
         Store<EntityStore> store = ref.getStore();
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());

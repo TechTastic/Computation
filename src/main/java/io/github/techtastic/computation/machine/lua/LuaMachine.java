@@ -1,5 +1,10 @@
-package io.github.techtastic.computation.machine;
+package io.github.techtastic.computation.machine.lua;
 
+import io.github.techtastic.computation.ComputationPlugin;
+import io.github.techtastic.computation.machine.BaseMachine;
+import org.apache.commons.lang3.ClassLoaderUtils;
+import org.jline.builtins.ClasspathResourceUtil;
+import org.jline.builtins.SyntaxHighlighter;
 import org.luaj.vm2.*;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.*;
@@ -7,10 +12,16 @@ import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 import org.luaj.vm2.lib.jse.JseStringLib;
 
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 
 public class LuaMachine extends BaseMachine {
     static Globals SERVER_GLOBALS;
+
+    public LuaMachine() throws URISyntaxException {
+        super(SyntaxHighlighter.build(Paths.get(LuaMachine.class.getResource("/lua.nanorc").toURI()), "lua"));
+    }
 
     @Override
     public String getType() {
@@ -18,7 +29,7 @@ public class LuaMachine extends BaseMachine {
     }
 
     @Override
-    void init() {
+    public void init() {
         SERVER_GLOBALS = new Globals();
         SERVER_GLOBALS.load(new JseBaseLib());
         SERVER_GLOBALS.load(new PackageLib());

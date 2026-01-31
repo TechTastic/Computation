@@ -13,6 +13,7 @@ repositories {
         name = "HytaleModdingReleases"
     }
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.eclipse.org/content/repositories/tm4e-snapshots/") }
 }
 
 dependencies {

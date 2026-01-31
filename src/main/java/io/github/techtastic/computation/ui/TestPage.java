@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
 import com.hypixel.hytale.server.core.ui.builder.EventData;
@@ -32,8 +33,8 @@ public class TestPage extends InteractiveCustomUIPage<TestPage.Data> {
     @Override
     public void build(@NonNull Ref<EntityStore> ref, @NonNull UICommandBuilder uiCommandBuilder, @NonNull UIEventBuilder uiEventBuilder, @NonNull Store<EntityStore> store) {
         uiCommandBuilder.append("Pages/TestPage.ui");
-
-        uiCommandBuilder.set("#Output.Text", String.join("\n", outputs));
+        if (!outputs.isEmpty())
+            uiCommandBuilder.set("#Output.Text", String.join("\n", outputs));
 
         uiEventBuilder.addEventBinding(
                 CustomUIEventBindingType.Activating,
@@ -59,7 +60,6 @@ public class TestPage extends InteractiveCustomUIPage<TestPage.Data> {
         UICommandBuilder uiCommandBuilder = new UICommandBuilder();
         uiCommandBuilder.set("#Output.Text", String.join("\n", outputs));
         sendUpdate(uiCommandBuilder, false);
-        //player.getPageManager().updateCustomPage(new CustomPage(this.getClass().getName(), false, false, this.lifetime, UICommandBuilder.EMPTY_COMMAND_ARRAY, UIEventBuilder.EMPTY_EVENT_BINDING_ARRAY));
     }
 
     public void addOutput(String snippet, @Nullable String results) {
@@ -68,7 +68,7 @@ public class TestPage extends InteractiveCustomUIPage<TestPage.Data> {
             if (results != null)
                 outputs.removeFirst();
         }
-        outputs.add(snippet);
+        outputs.add(ComputationPlugin.LUA.highlightSyntax(snippet));
         if (results != null)
             outputs.add(results);
     }

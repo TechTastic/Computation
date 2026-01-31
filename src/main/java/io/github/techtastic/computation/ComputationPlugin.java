@@ -5,13 +5,23 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Int
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import io.github.techtastic.computation.interaction.ComputerOpenInteraction;
-import io.github.techtastic.computation.machine.LuaMachine;
+import io.github.techtastic.computation.machine.lua.LuaMachine;
+
+import java.net.URISyntaxException;
 
 public class ComputationPlugin extends JavaPlugin {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static ComputationPlugin instance;
 
-    public static final LuaMachine LUA = new LuaMachine();
+    public static final LuaMachine LUA;
+
+    static {
+        try {
+            LUA = new LuaMachine();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public ComputationPlugin(JavaPluginInit init) {
         super(init);
