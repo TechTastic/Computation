@@ -1,0 +1,44 @@
+$C = "../Common.ui";
+
+@ButtonStyle = TextButtonStyle(
+    Default: (Background: #3a7bd5, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Hovered: (Background: #4a8be5, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Pressed: (Background: #2a6bc5, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
+);
+
+Group {
+  Anchor: (Width: 400, Height: 300);
+  Background: #1a1a2e(0.95);
+  LayoutMode: Top;
+  Padding: (Full: 16);
+
+  Label #Title {
+    Text: "Test";
+    Anchor: (Height: 32);
+    Style: (FontSize: 18, TextColor: #ffffff, HorizontalAlignment: Center );
+  }
+
+  Group { Anchor: (Height: 10); }
+
+  Label #Output {
+    Text: "";
+    Anchor: (Height: 150);
+    Background: #000000;
+    Style: (FontSize: 12, TextColor: #ffffff);
+  }
+
+  Group { Anchor: (Height: 10); }
+
+  $C.@TextField #RunCommand {
+    Anchor: (Height: 35, Width: 300);
+    PlaceholderText: "Run Lua Snippets Here...";
+  }
+
+  Group { Anchor: (Height: 10); }
+
+  TextButton #Run {
+    Anchor: (Height: 20, Width: 100);
+    Text: "Run...";
+    Style: @ButtonStyle;
+  }
+}

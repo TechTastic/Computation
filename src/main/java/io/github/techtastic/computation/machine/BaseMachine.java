@@ -13,9 +13,9 @@ public abstract class BaseMachine {
 
     public abstract String getType();
 
-    public void runScript(File script) throws IOException {
-        runScript(Files.readString(script.toPath()));
+    public Object[] runScript(File script) throws IOException {
+        return runScript(Files.readString(script.toPath()));
     }
 
-    public abstract void runScript(String script);
+    public abstract Object[] runScript(String script);
 }

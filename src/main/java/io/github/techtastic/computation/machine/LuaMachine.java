@@ -30,7 +30,7 @@ public class LuaMachine extends BaseMachine {
     }
 
     @Override
-    public void runScript(String script) {
+    public Object[] runScript(String script) {
         Globals userGlobals = new Globals();
         userGlobals.load(new JseBaseLib());
         userGlobals.load(new PackageLib());
@@ -51,12 +51,17 @@ public class LuaMachine extends BaseMachine {
                 throw new Error("Script overran resource limits.");
             }
         };
-        final int instruction_count = 20;
+        final int instruction_count = 100;
         sethook.invoke(LuaValue.varargsOf(new LuaValue[] { thread, hookfunc,
                 LuaValue.EMPTYSTRING, LuaValue.valueOf(instruction_count) }));
 
         Varargs result = thread.resume(LuaValue.NIL);
+        Object[] arr = new Object[result.narg()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = result.arg(i).toString();
+        }
         System.out.println("[["+script+"]] -> "+result);
+        return arr;
     }
 
     static class ReadOnlyLuaTable extends LuaTable {
