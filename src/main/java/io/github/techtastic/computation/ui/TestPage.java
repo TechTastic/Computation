@@ -4,7 +4,6 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.packets.interface_.CustomPage;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -21,6 +20,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TestPage extends InteractiveCustomUIPage<TestPage.Data> {
     private final List<String> outputs = new ArrayList<>();
@@ -43,15 +43,23 @@ public class TestPage extends InteractiveCustomUIPage<TestPage.Data> {
     }
 
     @Override
-    public void handleDataEvent(@NonNull Ref<EntityStore> ref, @NonNull Store<EntityStore> store, TestPage.@NonNull Data data) {
+    public void handleDataEvent(@NonNull Ref<EntityStore> ref, @NonNull Store<EntityStore> store, @NonNull Data data) {
         if (data.snippet == null) return;
-        Object[] results = ComputationPlugin.LUA.runScript(data.snippet);
+        AtomicReference<String> print = new AtomicReference<>();
+        Object[] results = ComputationPlugin.LUA.runScript(data.snippet, print::set, err -> {});
         Player player = store.getComponent(ref, Player.getComponentType());
         if (player == null) return;
         TestPage page = (TestPage) player.getPageManager().getCustomPage();
         if (page == null) return;
         page.addOutput(data.snippet, String.join(",", Arrays.stream(results).map(o -> (String) o).toList()));
-        player.getPageManager().updateCustomPage(new CustomPage(this.getClass().getName(), false, false, this.lifetime, UICommandBuilder.EMPTY_COMMAND_ARRAY, UIEventBuilder.EMPTY_EVENT_BINDING_ARRAY));
+        String prt = print.get();
+        if (prt != null)
+            page.addOutput(prt, null);
+
+        UICommandBuilder uiCommandBuilder = new UICommandBuilder();
+        uiCommandBuilder.set("#Output.Text", String.join("\n", outputs));
+        sendUpdate(uiCommandBuilder, false);
+        //player.getPageManager().updateCustomPage(new CustomPage(this.getClass().getName(), false, false, this.lifetime, UICommandBuilder.EMPTY_COMMAND_ARRAY, UIEventBuilder.EMPTY_EVENT_BINDING_ARRAY));
     }
 
     public void addOutput(String snippet, @Nullable String results) {

@@ -7,6 +7,8 @@ import org.luaj.vm2.lib.jse.JseBaseLib;
 import org.luaj.vm2.lib.jse.JseMathLib;
 import org.luaj.vm2.lib.jse.JseStringLib;
 
+import java.util.function.Consumer;
+
 public class LuaMachine extends BaseMachine {
     static Globals SERVER_GLOBALS;
 
@@ -30,7 +32,7 @@ public class LuaMachine extends BaseMachine {
     }
 
     @Override
-    public Object[] runScript(String script) {
+    public Object[] runScript(String script, Consumer<String> printCallback, Consumer<String> errorCallback) {
         Globals userGlobals = new Globals();
         userGlobals.load(new JseBaseLib());
         userGlobals.load(new PackageLib());
@@ -42,6 +44,23 @@ public class LuaMachine extends BaseMachine {
         userGlobals.load(new DebugLib());
         LuaValue sethook = userGlobals.get("debug").get("sethook");
         userGlobals.set("debug", LuaValue.NIL);
+
+        userGlobals.set("print", new VarArgFunction() {
+            @Override
+            public Varargs invoke(Varargs args) {
+                LuaValue tostring = userGlobals.get("tostring");
+                StringBuilder str = new StringBuilder();
+                for (int i = 1, n = args.narg(); i <= n; i++) {
+                    if (i > 1)
+                        str.append('\t');
+                    LuaString s = tostring.call(args.arg(i)).strvalue();
+                    str.append(s.tojstring());
+                }
+                str.append('\n');
+                printCallback.accept(str.toString());
+                return NONE;
+            }
+        });
 
         LuaValue chunk = SERVER_GLOBALS.load(script, "main", userGlobals);
         LuaThread thread = new LuaThread(userGlobals, chunk);
@@ -56,12 +75,12 @@ public class LuaMachine extends BaseMachine {
                 LuaValue.EMPTYSTRING, LuaValue.valueOf(instruction_count) }));
 
         Varargs result = thread.resume(LuaValue.NIL);
-        Object[] arr = new Object[result.narg()];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = result.arg(i).toString();
-        }
         System.out.println("[["+script+"]] -> "+result);
-        return arr;
+
+        String str = result.toString();
+        if (str.startsWith("(") && str.endsWith(")"))
+            return str.substring(1, str.length() - 1).split(",");
+        return new String[]{str};
     }
 
     static class ReadOnlyLuaTable extends LuaTable {
